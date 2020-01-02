@@ -143,6 +143,7 @@ export default class Metodos{
                               resumen=resumen+marcador.uv;     // si las fechas coinciden sumamos los uv a resumen
                               i++; 
                               temp=unico;                   // guardamos la ubi en caso de que cambie de fecha y se pierda este dato
+                              console.log("la suma de", unico, " : ",resumen);
                          }else{
                               let obj= {         // por cada iteracion que entre al condicional se crea un nuevo objeto
                                    ubicacion:'ubicacion',
@@ -151,6 +152,7 @@ export default class Metodos{
                               };
                               resumen=resumen/i;          // promedio de los uvs recolectados
                               resumen=Math.round(resumen);     // redondeamos el valor resumen
+                              console.log("el total de ", unico, " : ",resumen);
                               obj.ubicacion=temp;              // guardamos la ubi de referencia para el obj
                               obj.uv=resumen;                   
                               obj.hora=fecha.toLocaleDateString();
@@ -165,6 +167,8 @@ export default class Metodos{
                }
           }
           resumen=resumen/i;  // como para guardar un obj resumen se hace cada que cambia la fecha el ultimo cambio es guardado en el array
+          resumen=Math.round(resumen);     // redondeamos el valor resumen
+          console.log("el total de ", unico, " : ",resumen);
           obj.ubicacion=temp;
           obj.uv=resumen;
           obj.hora=fecha.toLocaleDateString();
@@ -197,7 +201,7 @@ export default class Metodos{
                               resumen=resumen+marcador.uv;     // si las fechas coinciden sumamos los uv a resumen
                               i++; 
                               temp=unico;  
-                              console.log("conteoo ",i )                 // guardamos la ubi en caso de que cambie de fecha y se pierda este dato
+                              // console.log("conteoo ",i )                 // guardamos la ubi en caso de que cambie de fecha y se pierda este dato
                          }else{
                               let obj= {         // por cada iteracion que entre al condicional se crea un nuevo objeto
                                    ubicacion:'ubicacion',
