@@ -140,16 +140,19 @@ export default class Metodos{
                for(var marcador of radiacion){
                     if( unico === marcador.ubicacion && marcador.hora.getHours() + 5 >= 11 && marcador.hora.getHours() + 5 <= 13 ){
                          if( marcador.hora.toLocaleDateString()===fecha.toLocaleDateString() ){ // filtramos objs por fecha
+                              
                               resumen=resumen+marcador.uv;     // si las fechas coinciden sumamos los uv a resumen
                               i++; 
                               temp=unico;                   // guardamos la ubi en caso de que cambie de fecha y se pierda este dato
+                              console.log("la suma de", unico, " : ",resumen,' la fecha es:', marcador.hora);
                          }else{
                               let obj= {         // por cada iteracion que entre al condicional se crea un nuevo objeto
                                    ubicacion:'ubicacion',
                                    uv:0,
                                    hora:'fecha',
                               };
-                              resumen=resumen/i;          // promedio de los uvs recolectados
+                              resumen=resumen/i;          // promedio de /los uvs recolectados
+                              console.log("el total de ", unico, " : ",resumen,' la fecha es:', marcador.hora);
                               resumen=Math.round(resumen);     // redondeamos el valor resumen
                               obj.ubicacion=temp;              // guardamos la ubi de referencia para el obj
                               obj.uv=resumen;                   
@@ -165,6 +168,8 @@ export default class Metodos{
                }
           }
           resumen=resumen/i;  // como para guardar un obj resumen se hace cada que cambia la fecha el ultimo cambio es guardado en el array
+          console.log("el total de ", temp, " : ",resumen,' la fecha es:', fecha);
+
           obj.ubicacion=temp;
           obj.uv=resumen;
           obj.hora=fecha.toLocaleDateString();
