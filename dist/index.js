@@ -20,7 +20,7 @@ server.app.use(cors_1.default({ origin: true, credentials: true }));
 server.app.use('/api', radiacion_1.default);
 // para nuestro caso siempre que se ejecute el servicio va a pasar por este middleware de nombre api que le puse 
 // conectar DB mongo con node
-mongoose_1.default.connect('mongodb://localhost:27017/mapa', { useNewUrlParser: true, useCreateIndex: true }, (err) => {
+mongoose_1.default.connect('mongodb+srv://Ian:2078389epn@cluster0-ru9rg.mongodb.net/mapa?retryWrites=true&w=majority' || 'mongodb://localhost', { useNewUrlParser: true, useCreateIndex: true }, (err) => {
     if (err)
         throw err;
     console.log('Base de datos OnLine no se cayo..!!!');
