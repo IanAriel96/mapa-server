@@ -1,5 +1,5 @@
-import express from 'express';
-export default class Server{
+import express from 'express';    // express me permite crear un servidor web y tiene todo lo necesario para montar un servidor REST 
+export default class Server{    // default significa que como tengo solo esta clase (Server) en este archivo se exporta por defecto cuando se llame 
     public app: express.Application;
     public port: number = 3000;
     

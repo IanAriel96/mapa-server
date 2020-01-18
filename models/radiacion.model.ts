@@ -4,7 +4,7 @@ import {Schema, model, Document} from 'mongoose';
 const radiacionSchema = new Schema({
     ubicacion: {
         type: String,
-        required: [true, 'La ubicacion es necesaria']
+        required: [false, 'La ubicacion es necesaria']
     },
     uv: {
         type: Number,
@@ -12,15 +12,15 @@ const radiacionSchema = new Schema({
     },
     hora: {
         type: Date,
-        required: [true, 'La fecha es necesaria']
+        required: [false, 'La fecha es necesaria']
     },
     latitud: {
         type: Number,
-        required: [true, 'La latitud es necesaria']
+        required: [false, 'La latitud es necesaria']
     },
     longitud: {
         type: Number,
-        required: [true, 'La longitud es necesaria']
+        required: [false, 'La longitud es necesaria']
     },
     coordenadas: {
         type: Array,

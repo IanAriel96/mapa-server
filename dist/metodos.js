@@ -111,6 +111,7 @@ class Metodos {
         var resumen = 0; // se guarda el resumen del promedio de los uv por fecha
         var temp = 'gg'; // variable para guardar la ubicacion previa para crear el objeto
         var fecha = new Date(); // utilizado como referencia para el condicional y saber el date 
+        //console.log("radiacion:",radiacion);
         var i = 0; // entero utilizado para dividir la cantidad de uvs por fecha
         var semanal = new Array(); // almacenamos los objetos con los resumenes
         let obj = {
@@ -127,19 +128,23 @@ class Metodos {
             for (var marcador of radiacion) {
                 if (unico === marcador.ubicacion && marcador.hora.getHours() + 5 >= 11 && marcador.hora.getHours() + 5 <= 13) {
                     if (marcador.hora.toLocaleDateString() === fecha.toLocaleDateString()) { // filtramos objs por fecha
+                        console.log("ian:", marcador.hora.getHours() + 5, " y fecha debe ser igual ", fecha.toLocaleDateString(), marcador.hora.toLocaleDateString());
+                        console.log("entro");
                         resumen = resumen + marcador.uv; // si las fechas coinciden sumamos los uv a resumen
                         i++;
                         temp = unico; // guardamos la ubi en caso de que cambie de fecha y se pierda este dato
-                        console.log("la suma de", unico, " : ", resumen, ' la fecha es:', marcador.hora);
+                        // console.log("la suma de", unico, " : ",resumen,' la fecha es:', marcador.hora);
                     }
                     else {
+                        console.log("ian:", marcador.hora.getHours() + 5, " de ", marcador.hora, " de ", temp);
+                        console.log("entro 2", fecha.toLocaleDateString(), marcador.hora.toLocaleDateString());
                         let obj = {
                             ubicacion: 'ubicacion',
                             uv: 0,
                             hora: 'fecha',
                         };
                         resumen = resumen / i; // promedio de /los uvs recolectados
-                        console.log("el total de ", unico, " : ", resumen, ' la fecha es:', marcador.hora);
+                        //   console.log("el total de ", unico, " : ",resumen,' la fecha es:', marcador.hora);
                         resumen = Math.round(resumen); // redondeamos el valor resumen
                         obj.ubicacion = temp; // guardamos la ubi de referencia para el obj
                         obj.uv = resumen;
@@ -154,7 +159,7 @@ class Metodos {
             }
         }
         resumen = resumen / i; // como para guardar un obj resumen se hace cada que cambia la fecha el ultimo cambio es guardado en el array
-        console.log("el total de ", temp, " : ", resumen, ' la fecha es:', fecha);
+        // console.log("el total de ", temp, " : ",resumen,' la fecha es:', fecha);
         obj.ubicacion = temp;
         obj.uv = resumen;
         obj.hora = fecha.toLocaleDateString();
@@ -186,7 +191,7 @@ class Metodos {
                         resumen = resumen + marcador.uv; // si las fechas coinciden sumamos los uv a resumen
                         i++;
                         temp = unico;
-                        console.log("conteoo ", i); // guardamos la ubi en caso de que cambie de fecha y se pierda este dato
+                        //  console.log("conteoo ",i )                 // guardamos la ubi en caso de que cambie de fecha y se pierda este dato
                     }
                     else {
                         let obj = {

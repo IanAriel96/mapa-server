@@ -7,11 +7,11 @@ const express_1 = require("express");
 const radiacion_model_1 = require("../models/radiacion.model");
 const metodos_1 = __importDefault(require("../metodos"));
 const userRoutes = express_1.Router();
-var hoy = new Date(); // obtenemos el dia, mes y anio del dia de hoy 
-hoy.setHours(0); // seteamos a 0 la hora debido a que nos interesa obtener todas las muestras del dia actual desde las 5 am (5 horas agregadas provocada por el ajuste de zona horaria que tenemos en el computador GMT-5)
 //var myDate = new Date("2019-12-2T01:00:00Z"); // para pruebas unicamente ya que en la bd puse muestras existentes para dias despues del actual osea hoy
 // OJOOO SE QUEDA HOY CON EL VALOR QUEMADO EN CASO DE QUE EL USUARIO DEJE ABIERTA LA APP TODO EL DIA, NO SE ACTUALIZARA CON EL DIA ACTUAL
 userRoutes.get('/recientes', (req, res) => {
+    var hoy = new Date(); // obtenemos el dia, mes y anio del dia de hoy 
+    hoy.setHours(0); // seteamos a 0 la hora debido a que nos interesa obtener todas las muestras del dia actual desde las 5 am (5 horas agregadas provocada por el ajuste de zona horaria que tenemos en el computador GMT-5)
     radiacion_model_1.Radiacion.find({ hora: { $gt: new Date(hoy) } }).sort({ hora: 1 }).exec((err, radiacion) => {
         console.log('hoyees:', hoy);
         //Radiacion.find({hora:{$gt:new Date(hoy),$lt:new Date(myDate)}}).exec((err,radiacion)=>{
@@ -41,6 +41,8 @@ userRoutes.get('/radiacion', (req, res) => {
     let coordenadas = metodos_1.default.calcularCoordenadas(radio);
     // no quitamos este metodo calcularC y el radio = 1, debido a que en el metodo marcadoresRecientes llama a este metodo internamente
     // {hora:{$gt:new Date(hoy)}}
+    var hoy = new Date(); // obtenemos el dia, mes y anio del dia de hoy 
+    hoy.setHours(0); // seteamos a 0 la hora debido a que nos interesa obtener todas las muestras del dia actual desde las 5 am (5 horas agregadas provocada por el ajuste de zona horaria que tenemos en el computador GMT-5)
     radiacion_model_1.Radiacion.find({ hora: { $gt: new Date(hoy) } }).sort({ hora: 1 }).exec((err, radiacion) => {
         // falta hacer un control de las muestras en la hora correcta
         if (err) {
@@ -67,6 +69,8 @@ userRoutes.get('/radiacion', (req, res) => {
     });
 });
 userRoutes.get('/mes', (req, res) => {
+    var hoy = new Date(); // obtenemos el dia, mes y anio del dia de hoy 
+    hoy.setHours(0); // seteamos a 0 la hora debido a que nos interesa obtener todas las muestras del dia actual desde las 5 am (5 horas agregadas provocada por el ajuste de zona horaria que tenemos en el computador GMT-5)
     radiacion_model_1.Radiacion.find().sort({ hora: 1 }).exec((err, radiacion) => {
         if (err) {
             res.status(500).send({
@@ -89,6 +93,8 @@ userRoutes.get('/mes', (req, res) => {
     });
 });
 userRoutes.get('/semanal', (req, res) => {
+    var hoy = new Date(); // obtenemos el dia, mes y anio del dia de hoy 
+    hoy.setHours(0); // seteamos a 0 la hora debido a que nos interesa obtener todas las muestras del dia actual desde las 5 am (5 horas agregadas provocada por el ajuste de zona horaria que tenemos en el computador GMT-5)
     let start = new Date(hoy);
     let end = new Date(hoy);
     end.setDate(end.getDate() + 1);
@@ -114,6 +120,53 @@ userRoutes.get('/semanal', (req, res) => {
         }
     });
 });
+userRoutes.get('/prueba', (req, res) => {
+    var hoy = new Date(); // obtenemos el dia, mes y anio del dia de hoy 
+    hoy.setHours(0); // seteamos a 0 la hora debido a que nos interesa obtener todas las muestras del dia actual desde las 5 am (5 horas agregadas provocada por el ajuste de zona horaria que tenemos en el computador GMT-5)
+    let start = new Date(hoy);
+    let end = new Date(hoy);
+    end.setDate(end.getDate() + 1);
+    start.setDate(start.getDate() - 19); // es -19 porque el chartjs solo permite mostrar 20 valores
+    radiacion_model_1.Radiacion.find({ hora: { $gte: start, $lt: end } }).sort({ hora: 1 }).exec((err, radiacion) => {
+        if (err) {
+            res.status(500).send({
+                message: 'Error en el servidor'
+            });
+        }
+        else {
+            if (radiacion) {
+                // radiacion=Metodos.marcadoresSemanal(radiacion);
+                res.status(200).send({
+                    radiacion
+                });
+            }
+            else {
+                res.status(404).send({
+                    message: 'No hay radiaciones en la base'
+                });
+            }
+        }
+    });
+});
+userRoutes.post('/crear', (req, res) => {
+    const dato = {
+        uv: req.body.uv,
+    };
+    // then es de una promesa
+    radiacion_model_1.Radiacion.create(dato).then(radiacionDB => {
+        res.json({
+            ok: true,
+            radiacion: radiacionDB // muestro el item radiacion creado al postman para decir q fue un exito
+        });
+        console.log("se creo con exito el obj dato..");
+    }).catch(err => {
+        res.json({
+            ok: false,
+            err //envio el error
+        });
+        console.log("Nooo se creo con exito el obj dato..");
+    });
+});
 userRoutes.post('/create', (req, res) => {
     const radiacion = {
         ubicacion: req.body.ubicacion,
@@ -128,6 +181,7 @@ userRoutes.post('/create', (req, res) => {
             ok: true,
             radiacion: radiacionDB // muestro el item radiacion creado al postman para decir q fue un exito
         });
+        console.log("se creo con exito el objetoo..");
     }).catch(err => {
         res.json({
             ok: false,
