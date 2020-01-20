@@ -35,23 +35,6 @@ class Metodos {
         return self.indexOf(value) === index;
     }
     ;
-    static FijarHora(radiacion) {
-        // metodo pendiente en caso de que un sensor no mande los datos poner una referencia y hacerla saber en front end
-        for (var objeto of radiacion) {
-            switch (objeto) {
-                case 8:
-                case 9:
-                case 10:
-                case 11:
-                case 12:
-                case 13:
-                case 14:
-                case 15:
-                case 16:
-            }
-        }
-        return radiacion;
-    }
     static marcadoresRecientes(radiacion) {
         var ubicaciones = []; // guarda las ubicaciones distinct
         var eliminados = []; // almacenara los index de los objetes que deban ser eliminados
@@ -128,23 +111,18 @@ class Metodos {
             for (var marcador of radiacion) {
                 if (unico === marcador.ubicacion && marcador.hora.getHours() + 5 >= 11 && marcador.hora.getHours() + 5 <= 13) {
                     if (marcador.hora.toLocaleDateString() === fecha.toLocaleDateString()) { // filtramos objs por fecha
-                        console.log("ian:", marcador.hora.getHours() + 5, " y fecha debe ser igual ", fecha.toLocaleDateString(), marcador.hora.toLocaleDateString());
-                        console.log("entro");
                         resumen = resumen + marcador.uv; // si las fechas coinciden sumamos los uv a resumen
                         i++;
                         temp = unico; // guardamos la ubi en caso de que cambie de fecha y se pierda este dato
                         // console.log("la suma de", unico, " : ",resumen,' la fecha es:', marcador.hora);
                     }
                     else {
-                        console.log("ian:", marcador.hora.getHours() + 5, " de ", marcador.hora, " de ", temp);
-                        console.log("entro 2", fecha.toLocaleDateString(), marcador.hora.toLocaleDateString());
                         let obj = {
                             ubicacion: 'ubicacion',
                             uv: 0,
                             hora: 'fecha',
                         };
                         resumen = resumen / i; // promedio de /los uvs recolectados
-                        //   console.log("el total de ", unico, " : ",resumen,' la fecha es:', marcador.hora);
                         resumen = Math.round(resumen); // redondeamos el valor resumen
                         obj.ubicacion = temp; // guardamos la ubi de referencia para el obj
                         obj.uv = resumen;
@@ -159,7 +137,6 @@ class Metodos {
             }
         }
         resumen = resumen / i; // como para guardar un obj resumen se hace cada que cambia la fecha el ultimo cambio es guardado en el array
-        // console.log("el total de ", temp, " : ",resumen,' la fecha es:', fecha);
         obj.ubicacion = temp;
         obj.uv = resumen;
         obj.hora = fecha.toLocaleDateString();
@@ -191,7 +168,6 @@ class Metodos {
                         resumen = resumen + marcador.uv; // si las fechas coinciden sumamos los uv a resumen
                         i++;
                         temp = unico;
-                        //  console.log("conteoo ",i )                 // guardamos la ubi en caso de que cambie de fecha y se pierda este dato
                     }
                     else {
                         let obj = {
@@ -200,7 +176,6 @@ class Metodos {
                             hora: new Date(),
                         };
                         resumen = resumen / i; // promedio de los uvs recolectados
-                        // resumen=Math.round(resumen);     // redondeamos el valor resumen
                         obj.ubicacion = temp; // guardamos la ubi de referencia para el obj
                         obj.uv = resumen;
                         obj.hora = new Date(fecha);
@@ -214,10 +189,106 @@ class Metodos {
             }
         }
         resumen = resumen / i; // como para guardar un obj resumen se hace cada que cambia la fecha el ultimo cambio es guardado en el array
-        //  resumen=Math.round(resumen);
         obj.ubicacion = temp;
         obj.uv = resumen;
         obj.hora = new Date(fecha);
+        mes.push(obj);
+        return mes;
+    }
+    static maximoMes(radiacion) {
+        var ubicaciones = []; // guarda las ubicaciones distinct
+        var resumen = 0; // se guarda el max de los uv por fecha
+        var temp = 'gg'; // variable para guardar la ubicacion previa para crear el objeto
+        var fecha = new Date(); // utilizado como referencia para el condicional y saber el date 
+        var mes = new Array(); // almacenamos los objetos con los resumenes
+        let obj = {
+            ubicacion: 'ubicacion',
+            uv: 0,
+            hora: new Date(fecha)
+        };
+        for (var repetidos of radiacion) { // se separa cada objeto del array de radiacion
+            ubicaciones.push(repetidos.ubicacion); // se almacena unicamente las ubicaciones de cada sensor que haya funcionado en ese dia presente
+            ubicaciones = ubicaciones.filter(Metodos.distinct); // se llama al metodo distinct para filtrar los repetidos    
+        }
+        temp = radiacion[0].ubicacion;
+        fecha = new Date(radiacion[0].hora); // tomamos el primer date de radiacion para empezar el condicional
+        resumen = radiacion[0].uv;
+        for (var unico of ubicaciones) {
+            for (var marcador of radiacion) {
+                // console.log("el mes es:",marcador.hora.getMonth()," fecha es:",fecha.getMonth())
+                if (unico === marcador.ubicacion) {
+                    if (marcador.hora.getMonth() === fecha.getMonth()) { // filtramos objs por mes
+                        if (marcador.uv >= resumen) { // no ponemos en el lazo anterior porque la mayor parte del tiempo sera false este lazo
+                            resumen = marcador.uv; // si las fechas coinciden sumamos los uv a resumen
+                            temp = unico;
+                            // fecha= new Date(marcador.hora);
+                        }
+                    }
+                    else {
+                        let obj = {
+                            ubicacion: temp,
+                            uv: resumen,
+                            hora: new Date(fecha),
+                        };
+                        mes.push(obj);
+                        resumen = marcador.uv; // inicializamos el nuevo obj resumen
+                        fecha = new Date(marcador.hora);
+                        temp = unico; // nos aseguramos del cambio de ubicacion por si acaso despues del lazo de unico
+                    }
+                }
+            }
+        }
+        obj.ubicacion = temp;
+        obj.uv = resumen;
+        obj.hora = new Date(fecha);
+        mes.push(obj);
+        return mes;
+    }
+    static maximoSemana(radiacion) {
+        var ubicaciones = []; // guarda las ubicaciones distinct
+        var resumen = 0; // se guarda el max de los uv por fecha
+        var temp = 'gg'; // variable para guardar la ubicacion previa para crear el objeto
+        var fecha = new Date(); // utilizado como referencia para el condicional y saber el date 
+        var mes = new Array(); // almacenamos los objetos con los resumenes
+        let obj = {
+            ubicacion: 'ubicacion',
+            uv: 0,
+            hora: new Date(fecha)
+        };
+        for (var repetidos of radiacion) { // se separa cada objeto del array de radiacion
+            ubicaciones.push(repetidos.ubicacion); // se almacena unicamente las ubicaciones de cada sensor que haya funcionado en ese dia presente
+            ubicaciones = ubicaciones.filter(Metodos.distinct); // se llama al metodo distinct para filtrar los repetidos    
+        }
+        temp = radiacion[0].ubicacion;
+        fecha = new Date(radiacion[0].hora); // tomamos el primer date de radiacion para empezar el condicional
+        resumen = radiacion[0].uv;
+        for (var unico of ubicaciones) {
+            for (var marcador of radiacion) {
+                if (unico === marcador.ubicacion) {
+                    if (marcador.hora.toLocaleDateString() === fecha.toLocaleDateString()) {
+                        if (marcador.uv >= resumen) { // filtramos objs por mes
+                            resumen = marcador.uv; // si las fechas coinciden sumamos los uv a resumen
+                            temp = unico;
+                            // fecha= new Date(marcador.hora);
+                        }
+                    }
+                    else {
+                        let obj = {
+                            ubicacion: temp,
+                            uv: resumen,
+                            hora: new Date(fecha.toLocaleDateString()),
+                        };
+                        mes.push(obj);
+                        resumen = marcador.uv; // inicializamos el nuevo obj resumen
+                        fecha = new Date(marcador.hora);
+                        temp = unico; // nos aseguramos del cambio de ubicacion por si acaso despues del lazo de unico
+                    }
+                }
+            }
+        }
+        obj.ubicacion = temp;
+        obj.uv = resumen;
+        obj.hora = new Date(fecha.toLocaleDateString());
         mes.push(obj);
         return mes;
     }

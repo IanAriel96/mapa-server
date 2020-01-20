@@ -13,7 +13,7 @@ userRoutes.get('/recientes', (req, res) => {
     var hoy = new Date(); // obtenemos el dia, mes y anio del dia de hoy 
     hoy.setHours(0); // seteamos a 0 la hora debido a que nos interesa obtener todas las muestras del dia actual desde las 5 am (5 horas agregadas provocada por el ajuste de zona horaria que tenemos en el computador GMT-5)
     radiacion_model_1.Radiacion.find({ hora: { $gt: new Date(hoy) } }).sort({ hora: 1 }).exec((err, radiacion) => {
-        console.log('hoyees:', hoy);
+        //console.log('hoyees:', hoy);
         //Radiacion.find({hora:{$gt:new Date(hoy),$lt:new Date(myDate)}}).exec((err,radiacion)=>{
         // gt es un operador para los valores mayores para nuestro ej todas las muestras del dia actual
         if (err) {
@@ -92,6 +92,30 @@ userRoutes.get('/mes', (req, res) => {
         }
     });
 });
+userRoutes.get('/maxmes', (req, res) => {
+    var hoy = new Date(); // obtenemos el dia, mes y anio del dia de hoy 
+    hoy.setHours(0); // seteamos a 0 la hora debido a que nos interesa obtener todas las muestras del dia actual desde las 5 am (5 horas agregadas provocada por el ajuste de zona horaria que tenemos en el computador GMT-5)
+    radiacion_model_1.Radiacion.find().sort({ hora: 1 }).exec((err, radiacion) => {
+        if (err) {
+            res.status(500).send({
+                message: 'Error en el servidor'
+            });
+        }
+        else {
+            if (radiacion) {
+                radiacion = metodos_1.default.maximoMes(radiacion);
+                res.status(200).send({
+                    radiacion
+                });
+            }
+            else {
+                res.status(404).send({
+                    message: 'No hay radiaciones en la base'
+                });
+            }
+        }
+    });
+});
 userRoutes.get('/semanal', (req, res) => {
     var hoy = new Date(); // obtenemos el dia, mes y anio del dia de hoy 
     hoy.setHours(0); // seteamos a 0 la hora debido a que nos interesa obtener todas las muestras del dia actual desde las 5 am (5 horas agregadas provocada por el ajuste de zona horaria que tenemos en el computador GMT-5)
@@ -108,6 +132,34 @@ userRoutes.get('/semanal', (req, res) => {
         else {
             if (radiacion) {
                 radiacion = metodos_1.default.marcadoresSemanal(radiacion);
+                res.status(200).send({
+                    radiacion
+                });
+            }
+            else {
+                res.status(404).send({
+                    message: 'No hay radiaciones en la base'
+                });
+            }
+        }
+    });
+});
+userRoutes.get('/maxsemanal', (req, res) => {
+    var hoy = new Date(); // obtenemos el dia, mes y anio del dia de hoy 
+    hoy.setHours(0); // seteamos a 0 la hora debido a que nos interesa obtener todas las muestras del dia actual desde las 5 am (5 horas agregadas provocada por el ajuste de zona horaria que tenemos en el computador GMT-5)
+    let start = new Date(hoy);
+    let end = new Date(hoy);
+    end.setDate(end.getDate() + 1);
+    start.setDate(start.getDate() - 19); // es -19 porque el chartjs solo permite mostrar 20 valores
+    radiacion_model_1.Radiacion.find({ hora: { $gte: start, $lt: end } }).sort({ hora: 1 }).exec((err, radiacion) => {
+        if (err) {
+            res.status(500).send({
+                message: 'Error en el servidor'
+            });
+        }
+        else {
+            if (radiacion) {
+                radiacion = metodos_1.default.maximoSemana(radiacion);
                 res.status(200).send({
                     radiacion
                 });
@@ -158,13 +210,13 @@ userRoutes.post('/crear', (req, res) => {
             ok: true,
             radiacion: radiacionDB // muestro el item radiacion creado al postman para decir q fue un exito
         });
-        console.log("se creo con exito el obj dato..");
+        //console.log("se creo con exito el obj dato..");
     }).catch(err => {
         res.json({
             ok: false,
             err //envio el error
         });
-        console.log("Nooo se creo con exito el obj dato..");
+        //console.log("Nooo se creo con exito el obj dato..");
     });
 });
 userRoutes.post('/create', (req, res) => {
@@ -181,7 +233,7 @@ userRoutes.post('/create', (req, res) => {
             ok: true,
             radiacion: radiacionDB // muestro el item radiacion creado al postman para decir q fue un exito
         });
-        console.log("se creo con exito el objetoo..");
+        // console.log("se creo con exito el objetoo..");
     }).catch(err => {
         res.json({
             ok: false,

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
+const express_1 = __importDefault(require("express")); // express me permite crear un servidor web y tiene todo lo necesario para montar un servidor REST 
 class Server {
     constructor() {
         this.port = 3000;

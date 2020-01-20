@@ -23,7 +23,7 @@ server.app.use('/api',userRoutes);
 // para nuestro caso siempre que se ejecute el servicio va a pasar por este middleware de nombre api que le puse 
 
 // conectar DB mongo con node
-mongoose.connect('mongodb+srv://Ian:2078389epn@cluster0-ru9rg.mongodb.net/ejemplo?retryWrites=true&w=majority' || 'mongodb://localhost',
+mongoose.connect('mongodb+srv://Ian:2078389epn@cluster0-ru9rg.mongodb.net/mapa?retryWrites=true&w=majority' || 'mongodb://localhost',
                 {useNewUrlParser: true, useCreateIndex: true},(err)=>{ //trabajamos con los indices
                 if (err) throw err;
                 console.log('Base de datos OnLine no se cayo..!!!')
