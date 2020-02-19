@@ -4,8 +4,8 @@ import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 
+const errorMiddleware = require('./errors');
 const server = new Server();
-
 
 
 //El Middleware es una funcion que se ejecuta antes que otras
@@ -20,6 +20,12 @@ server.app.use(cors({origin: true, credentials: true}));
 
 // rutas de mi aplicacion
 server.app.use('/api',userRoutes); 
+// server.app.get('/api/errores',(req: Request, res:Response)=>{
+//     // const erroresRes = errores;
+//     res.json({ // esta es la respuesta que le voy a mandar al navegador si se logra crear el item radiacion de la BD
+//          erroresRes
+//      })
+//  });
 // para nuestro caso siempre que se ejecute el servicio va a pasar por este middleware de nombre api que le puse 
 
 // conectar DB mongo con node
@@ -29,6 +35,18 @@ mongoose.connect('mongodb+srv://Ian:2078389epn@cluster0-ru9rg.mongodb.net/mapa?r
                 console.log('Base de datos OnLine no se cayo..!!!')
                 })
 
+// control de errores
+
+// server.app.use(function(error:any, req:any, res:any, next:any) {
+//     res.status(500).json({
+//         status:'error',
+//         name: error.name,
+//         message: error.message,
+//         path: error.path,
+//         date: Date(),
+//     });
+// });
+server.app.use(errorMiddleware);
 
 // Levantar el servidor
 server.start();

@@ -6,7 +6,7 @@ const mongoose_1 = require("mongoose");
 const radiacionSchema = new mongoose_1.Schema({
     ubicacion: {
         type: String,
-        required: [false, 'La ubicacion es necesaria']
+        required: [true, 'La ubicacion es necesaria']
     },
     uv: {
         type: Number,
@@ -14,15 +14,15 @@ const radiacionSchema = new mongoose_1.Schema({
     },
     hora: {
         type: Date,
-        required: [false, 'La fecha es necesaria']
+        required: [true, 'La fecha es necesaria']
     },
     latitud: {
         type: Number,
-        required: [false, 'La latitud es necesaria']
+        required: [true, 'La latitud es necesaria']
     },
     longitud: {
         type: Number,
-        required: [false, 'La longitud es necesaria']
+        required: [true, 'La longitud es necesaria']
     },
     coordenadas: {
         type: Array,

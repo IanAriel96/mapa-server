@@ -2,6 +2,7 @@
 
 export default class Metodos{
      constructor() {};
+
      static calcularCoordenadas(radio: number ) {
         let puntos: number [] = [];
         radio = Math.pow(radio, 2);
@@ -38,8 +39,8 @@ export default class Metodos{
      let x:number=0;     // utilizado para ayudar a la eliminacion de los objetos
      let bandera: boolean; // sirve para entrar a un lazo y almacenar por primera vez un objeto como referencia en la comparacion de los obj json
      let reciente;     // objeto que almacenara al primer objeto json y actualizado a lo largo del metodo
-     let radio = 1 ;     // radio de los hexagonos
-     var coordenadas: number[] = Metodos.calcularCoordenadas(radio);
+     // let radio = 1 ;     // radio de los hexagonos
+     // var coordenadas: number[] = Metodos.calcularCoordenadas(radio);
           for(var repetidos of radiacion){     // se separa cada objeto del array de radiacion
                ubicaciones.push(repetidos.ubicacion); // se almacena unicamente las ubicaciones de cada sensor que haya funcionado en ese dia presente
                ubicaciones = ubicaciones.filter(Metodos.distinct); // se llama al metodo distinct para filtrar los repetidos    
@@ -80,10 +81,10 @@ export default class Metodos{
                radiacion.splice(num-x,1); 
                x++;
           }
-          for(var marcador of radiacion){     // añadimos las coordenadas y el color para los poligonos de los marcadores mas recientes por cada sensor que haya funcionado ese dia presente
-               marcador.coordenadas = coordenadas;
-               marcador.color=Metodos.escogerColor(marcador.uv);
-          }
+          // for(var marcador of radiacion){     // añadimos las coordenadas y el color para los poligonos de los marcadores mas recientes por cada sensor que haya funcionado ese dia presente
+          //      marcador.coordenadas = coordenadas;
+          //      marcador.color=Metodos.escogerColor(marcador.uv);
+          // }
           return radiacion;
      }
      static marcadoresSemanal(radiacion:any){
