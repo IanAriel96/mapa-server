@@ -8,8 +8,14 @@ const radiacion_model_1 = require("../models/radiacion.model");
 const metodos_1 = __importDefault(require("../metodos"));
 const userRoutes = express_1.Router();
 var radio = 1;
+var calendar = new Date();
 var coordenadas = metodos_1.default.calcularCoordenadas(radio);
-var errores = [];
+userRoutes.get('/prueba', (req, res) => {
+    res.json({
+        ok: true,
+        mensaje: 'Todo funciona bien!'
+    });
+});
 userRoutes.post('/radio', (req, res, next) => {
     radio = req.body.dato;
     coordenadas = metodos_1.default.calcularCoordenadas(radio);
@@ -20,13 +26,6 @@ userRoutes.post('/radio', (req, res, next) => {
         });
     }
     catch (err) {
-        var error = {
-            status: 'error',
-            name: err.name,
-            message: err.message,
-            date: Date(),
-        };
-        errores.push(error);
         next(err); // genera el error con un response
     }
 });
@@ -35,20 +34,9 @@ userRoutes.post('/radio', (req, res, next) => {
 userRoutes.get('/recientes', (req, res, next) => {
     var hoy = new Date(); // obtenemos el dia, mes y anio del dia de hoy 
     hoy.setHours(0); // seteamos a 0 la hora debido a que nos interesa obtener todas las muestras del dia actual desde las 5 am (5 horas agregadas provocada por el ajuste de zona horaria que tenemos en el computador GMT-5)
-    //abc();
-    // console.log(errorMiddleware);
     radiacion_model_1.Radiacion.find({ hora: { $gt: new Date(hoy) } }).sort({ hora: 1 }).exec((err, radiacion) => {
-        //console.log('hoyees:', hoy);
-        //Radiacion.find({hora:{$gt:new Date(hoy),$lt:new Date(myDate)}}).exec((err,radiacion)=>{
-        // gt es un operador para los valores mayores para nuestro ej todas las muestras del dia actual
         if (err) {
-            var error = {
-                status: 'error',
-                name: err.name,
-                message: 'Error en el servidor',
-                date: Date(),
-            };
-            errores.push(error);
+            err.message = 'Error en el servidor';
             next(err);
         }
         else {
@@ -64,35 +52,20 @@ userRoutes.get('/recientes', (req, res, next) => {
             }
             else {
                 var err = new Error('No hay muestras en la base');
-                var error = {
-                    status: 'error',
-                    name: err.name,
-                    message: err.message,
-                    date: Date(),
-                };
-                errores.push(error);
                 next(err);
             }
         }
     });
 });
-userRoutes.get('/radiacion', (req, res, next) => {
-    // let radio = 1 ; 
-    // let coordenadas: number[] = Metodos.calcularCoordenadas(radio); 
-    // no quitamos este metodo calcularC y el radio = 1, debido a que en el metodo marcadoresRecientes llama a este metodo internamente
-    // {hora:{$gt:new Date(hoy)}}
-    var hoy = new Date(); // obtenemos el dia, mes y anio del dia de hoy 
-    hoy.setHours(0); // seteamos a 0 la hora debido a que nos interesa obtener todas las muestras del dia actual desde las 5 am (5 horas agregadas provocada por el ajuste de zona horaria que tenemos en el computador GMT-5)
-    radiacion_model_1.Radiacion.find({ hora: { $gt: new Date(hoy) } }).sort({ hora: 1 }).exec((err, radiacion) => {
+userRoutes.post('/radiacion', (req, res, next) => {
+    calendar = req.body.calendar;
+    var end = new Date(calendar); // obtenemos el dia, mes y anio del dia de hoy 
+    end.setHours(19); // seteamos a 19 la hora debido a que es una hora posterior a las mediciones del dia del calendario seleccionado
+    // console.log('mi end es:', end);
+    radiacion_model_1.Radiacion.find({ hora: { $gte: new Date(calendar), $lt: end } }).sort({ hora: 1 }).exec((err, radiacion) => {
         // falta hacer un control de las muestras en la hora correcta
         if (err) {
-            var error = {
-                status: 'error',
-                name: err.name,
-                message: 'Error en el servidor',
-                date: Date(),
-            };
-            errores.push(error);
+            err.message = 'Error en el servidor';
             next(err);
         }
         else {
@@ -102,31 +75,17 @@ userRoutes.get('/radiacion', (req, res, next) => {
                 });
             }
             else {
-                var err = new Error('No hay muestras en la base');
-                var error = {
-                    status: 'error',
-                    name: err.name,
-                    message: err.message,
-                    date: Date(),
-                };
-                errores.push(error);
-                next(err);
+                res.status(200).send({
+                    radiacion
+                });
             }
         }
     });
 });
 userRoutes.get('/mes', (req, res, next) => {
-    var hoy = new Date(); // obtenemos el dia, mes y anio del dia de hoy 
-    hoy.setHours(0); // seteamos a 0 la hora debido a que nos interesa obtener todas las muestras del dia actual desde las 5 am (5 horas agregadas provocada por el ajuste de zona horaria que tenemos en el computador GMT-5)
     radiacion_model_1.Radiacion.find().sort({ hora: 1 }).exec((err, radiacion) => {
         if (err) {
-            var error = {
-                status: 'error',
-                name: err.name,
-                message: 'Error en el servidor',
-                date: Date(),
-            };
-            errores.push(error);
+            err.message = 'Error en el servidor';
             next(err);
         }
         else {
@@ -138,30 +97,15 @@ userRoutes.get('/mes', (req, res, next) => {
             }
             else {
                 var err = new Error('No hay muestras en la base');
-                var error = {
-                    status: 'error',
-                    name: err.name,
-                    message: err.message,
-                    date: Date(),
-                };
-                errores.push(error);
                 next(err);
             }
         }
     });
 });
 userRoutes.get('/maxmes', (req, res, next) => {
-    var hoy = new Date(); // obtenemos el dia, mes y anio del dia de hoy 
-    hoy.setHours(0); // seteamos a 0 la hora debido a que nos interesa obtener todas las muestras del dia actual desde las 5 am (5 horas agregadas provocada por el ajuste de zona horaria que tenemos en el computador GMT-5)
     radiacion_model_1.Radiacion.find().sort({ hora: 1 }).exec((err, radiacion) => {
         if (err) {
-            var error = {
-                status: 'error',
-                name: err.name,
-                message: 'Error en el servidor',
-                date: Date(),
-            };
-            errores.push(error);
+            err.message = 'Error en el servidor';
             next(err);
         }
         else {
@@ -173,13 +117,6 @@ userRoutes.get('/maxmes', (req, res, next) => {
             }
             else {
                 var err = new Error('No hay muestras en la base');
-                var error = {
-                    status: 'error',
-                    name: err.name,
-                    message: err.message,
-                    date: Date(),
-                };
-                errores.push(error);
                 next(err);
             }
         }
@@ -189,18 +126,13 @@ userRoutes.get('/semanal', (req, res, next) => {
     var hoy = new Date(); // obtenemos el dia, mes y anio del dia de hoy 
     hoy.setHours(0); // seteamos a 0 la hora debido a que nos interesa obtener todas las muestras del dia actual desde las 5 am (5 horas agregadas provocada por el ajuste de zona horaria que tenemos en el computador GMT-5)
     let start = new Date(hoy);
-    let end = new Date(hoy);
-    end.setDate(end.getDate() + 1);
-    start.setDate(start.getDate() - 19); // es -19 porque el chartjs solo permite mostrar 20 valores
-    radiacion_model_1.Radiacion.find({ hora: { $gte: start, $lt: end } }).sort({ hora: 1 }).exec((err, radiacion) => {
+    let end = new Date(hoy); // no restamos 1 a end debido a que el limite es el dia actual a las 0 para leer todas las fechas de ayer
+    // end.setDate(end.getDate()-1); // es -1 xq necesitamos que el ultimo dia sea uno menos del actual
+    start.setDate(start.getDate() - 30); // es -19 porque el chartjs solo permite mostrar 20 valores
+    // console.log('start es:', start,' end es:', end);
+    radiacion_model_1.Radiacion.find({ hora: { $gte: start, $lte: end } }).sort({ hora: 1 }).exec((err, radiacion) => {
         if (err) {
-            var error = {
-                status: 'error',
-                name: err.name,
-                message: 'Error en el servidor',
-                date: Date(),
-            };
-            errores.push(error);
+            err.message = 'Error en el servidor';
             next(err);
         }
         else {
@@ -212,13 +144,6 @@ userRoutes.get('/semanal', (req, res, next) => {
             }
             else {
                 var err = new Error('No hay muestras en la base');
-                var error = {
-                    status: 'error',
-                    name: err.name,
-                    message: err.message,
-                    date: Date(),
-                };
-                errores.push(error);
                 next(err);
             }
         }
@@ -228,18 +153,12 @@ userRoutes.get('/maxsemanal', (req, res, next) => {
     var hoy = new Date(); // obtenemos el dia, mes y anio del dia de hoy 
     hoy.setHours(0); // seteamos a 0 la hora debido a que nos interesa obtener todas las muestras del dia actual desde las 5 am (5 horas agregadas provocada por el ajuste de zona horaria que tenemos en el computador GMT-5)
     let start = new Date(hoy);
-    let end = new Date(hoy);
-    end.setDate(end.getDate() + 1);
-    start.setDate(start.getDate() - 19); // es -19 porque el chartjs solo permite mostrar 20 valores
+    let end = new Date(hoy); // no restamos 1 a end debido a que el limite es el dia actual a las 0 para leer todas las fechas de ayer
+    // end.setDate(end.getDate());
+    start.setDate(start.getDate() - 30); // restamos 30 porque queremos los 30 dias anteriores al actual
     radiacion_model_1.Radiacion.find({ hora: { $gte: start, $lt: end } }).sort({ hora: 1 }).exec((err, radiacion) => {
         if (err) {
-            var error = {
-                status: 'error',
-                name: err.name,
-                message: 'Error en el servidor',
-                date: Date(),
-            };
-            errores.push(error);
+            err.message = 'Error en el servidor';
             next(err);
         }
         else {
@@ -251,53 +170,10 @@ userRoutes.get('/maxsemanal', (req, res, next) => {
             }
             else {
                 var err = new Error('No hay muestras en la base');
-                var error = {
-                    status: 'error',
-                    name: err.name,
-                    message: err.message,
-                    date: Date(),
-                };
-                errores.push(error);
                 next(err);
             }
         }
     });
-});
-userRoutes.get('/errores', (req, res, next) => {
-    errores;
-    try {
-        res.json({
-            lista: errores,
-        });
-    }
-    catch (err) {
-        var error = {
-            status: 'error',
-            name: err.name,
-            message: err.message,
-            date: Date(),
-        };
-        errores.push(error);
-        next(err); // genera el error con un response
-    }
-});
-userRoutes.get('/limpiar', (req, res, next) => {
-    errores = [];
-    try {
-        res.json({
-            lista: errores,
-        });
-    }
-    catch (err) {
-        var error = {
-            status: 'error',
-            name: err.name,
-            message: err.message,
-            date: Date(),
-        };
-        errores.push(error);
-        next(err); // genera el error con un response
-    }
 });
 userRoutes.post('/crear', (req, res) => {
     const dato = {
@@ -325,13 +201,6 @@ userRoutes.post('/create', (req, res, next) => {
         });
         // console.log("se creo con exito el objetoo..");
     }).catch(err => {
-        var error = {
-            status: 'error',
-            name: err.name,
-            message: err.message,
-            date: Date(),
-        };
-        errores.push(error);
         next(err); // genera el error con un response
     });
 });
