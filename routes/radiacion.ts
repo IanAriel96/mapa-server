@@ -27,8 +27,6 @@ userRoutes.post('/radio', (req: Request,res: Response,next)=>{
     }
 })
 
-//var myDate = new Date("2019-12-2T01:00:00Z"); // para pruebas unicamente ya que en la bd puse muestras existentes para dias despues del actual osea hoy
-// OJOOO SE QUEDA HOY CON EL VALOR QUEMADO EN CASO DE QUE EL USUARIO DEJE ABIERTA LA APP TODO EL DIA, NO SE ACTUALIZARA CON EL DIA ACTUAL
 userRoutes.get('/recientes',(req: Request, res:Response, next)=>{ // envia las ultimas muestras por sensor
     var hoy = new Date(); // obtenemos el dia, mes y anio del dia de hoy 
     hoy.setHours(0); // seteamos a 0 la hora debido a que nos interesa obtener todas las muestras del dia actual desde las 5 am (5 horas agregadas provocada por el ajuste de zona horaria que tenemos en el computador GMT-5)
@@ -57,7 +55,6 @@ userRoutes.post('/radiacion', (req: Request,res: Response,next)=>{
     calendar = req.body.calendar;
     var end = new Date(calendar); // obtenemos el dia, mes y anio del dia de hoy 
     end.setHours(19); // seteamos a 19 la hora debido a que es una hora posterior a las mediciones del dia del calendario seleccionado
-    // console.log('mi end es:', end);
     Radiacion.find({hora:{$gte:new Date(calendar), $lt: end}}).sort({hora:1}).exec((err,radiacion)=>{ // eliminar el myDate de la consulta cuando no se agregen muestras posteriores a la fecha actual
         // falta hacer un control de las muestras en la hora correcta
         if(err){
@@ -67,7 +64,6 @@ userRoutes.post('/radiacion', (req: Request,res: Response,next)=>{
             if(Object.keys(radiacion).length !== 0){  
                 res.status(200).send({
                     radiacion
-                
                 });
             }else{
                 res.status(200).send({
@@ -146,7 +142,6 @@ userRoutes.get('/maxsemanal',(req: Request, res:Response, next)=>{
     hoy.setHours(0); // seteamos a 0 la hora debido a que nos interesa obtener todas las muestras del dia actual desde las 5 am (5 horas agregadas provocada por el ajuste de zona horaria que tenemos en el computador GMT-5)
     let start= new Date(hoy);
     let end = new Date(hoy); // no restamos 1 a end debido a que el limite es el dia actual a las 0 para leer todas las fechas de ayer
-    // end.setDate(end.getDate());
     start.setDate(start.getDate()-30); // restamos 30 porque queremos los 30 dias anteriores al actual
     Radiacion.find({hora: {$gte: start, $lt: end}}).sort({hora:1}).exec((err,radiacion)=>{
         if(err){
@@ -166,17 +161,6 @@ userRoutes.get('/maxsemanal',(req: Request, res:Response, next)=>{
     });
 });
 
-userRoutes.post('/crear', (req: Request,res: Response)=>{
-    const dato = {
-        uv: req.body.uv,
-    };
-    res.json({ // esta es la respuesta que le voy a mandar al navegador si se logra crear el item radiacion de la BD
-        ok:true,
-        uv: dato.uv,
-    });
-     
-})
-
 userRoutes.post('/create', (req: Request,res: Response, next)=>{
     const radiacion = {
         ubicacion: req.body.ubicacion,
@@ -185,37 +169,14 @@ userRoutes.post('/create', (req: Request,res: Response, next)=>{
         latitud: req.body.latitud,
         longitud: req.body.longitud
     };
-    
-    // radiacion.hora.setHours(radiacion.hora.getHours()-5);
-    // then es de una promesa
     Radiacion.create( radiacion).then(radiacionDB=>{ // radiacionDB es el cuerpo de cuando se cumpla la promesa
         res.json({ // esta es la respuesta que le voy a mandar al navegador si se logra crear el item radiacion de la BD
             ok:true,
             radiacion: radiacionDB // muestro el item radiacion creado al postman para decir q fue un exito
         });
-        // console.log("se creo con exito el objetoo..");
     }).catch(err => {
         next(err); // genera el error con un response
     })
-});
-userRoutes.post('/update',(req:any, res:Response)=>{
-    const radiacion={
-        uv:req.body.uv,
-        hora:req.body.hora 
-    }
- Radiacion.findByIdAndUpdate("5d82636976ddcb3ea0ead737",radiacion,{new:false},(err,radiacionDB)=>{
-     if(err) throw err;
-     if(!radiacionDB){
-         return res.json({
-             ok:false,
-             mensaje: 'No exsite esa radiacion con ese ID'
-         });
-     }
-     res.json({ // esta es la respuesta que le voy a mandar al navegador si se logra crear el item radiacion de la BD
-        ok:true,
-        radiacion: radiacionDB // muestro el item radiacion creado al postman para decir q fue un exito
-    })
- })
 });
 
 export default userRoutes;

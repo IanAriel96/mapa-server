@@ -1,8 +1,5 @@
-
-
 export default class Metodos{
      constructor() {};
-
      static calcularCoordenadas(radio: number ) {
         let puntos: number [] = [];
         radio = Math.pow(radio, 2);
@@ -13,8 +10,7 @@ export default class Metodos{
         radio = Math.sqrt(radio) / 111.32;
         puntos = [x, y, radio];
         return puntos;
-    }
-    
+     }
      static escogerColor(uv: number) { // metodo para seleccionar el color del poligono segun el indice uv
         if (uv <= 2) {
           return '#43FF33';     //color verde
@@ -30,8 +26,7 @@ export default class Metodos{
      } 
      static distinct(value:any, index:any, self:any) {  // metodo para realizar el proceso distinct
           return self.indexOf(value) === index;
-      };
-
+     };
      static marcadoresRecientes(radiacion:any){
      var ubicaciones: string[] = []; // guarda las ubicaciones distinct
      var eliminados: number[] = []; // almacenara los index de los objetes que deban ser eliminados
@@ -39,8 +34,6 @@ export default class Metodos{
      let x:number=0;     // utilizado para ayudar a la eliminacion de los objetos
      let bandera: boolean; // sirve para entrar a un lazo y almacenar por primera vez un objeto como referencia en la comparacion de los obj json
      let reciente;     // objeto que almacenara al primer objeto json y actualizado a lo largo del metodo
-     // let radio = 1 ;     // radio de los hexagonos
-     // var coordenadas: number[] = Metodos.calcularCoordenadas(radio);
           for(var repetidos of radiacion){     // se separa cada objeto del array de radiacion
                ubicaciones.push(repetidos.ubicacion); // se almacena unicamente las ubicaciones de cada sensor que haya funcionado en ese dia presente
                ubicaciones = ubicaciones.filter(Metodos.distinct); // se llama al metodo distinct para filtrar los repetidos    
@@ -50,7 +43,6 @@ export default class Metodos{
                i=0; // inicializamos el index para cada iteracion, la misma que sera usada para saber que index de radiacion eliminar
                reciente = {date:new Date(),index:0}; // inicializamos reciente para cada iteracion
           for(var marcador of radiacion){ // itera todo lo que hay en radiacion
-               
                if( bandera === true && unicos === marcador.ubicacion){ // solo en la primera iteracion guardamos en reciente al marcador con la ubicacion de unicos 
                // la segunda condicion siempre va a cumplir 
                     reciente.date = marcador.hora;
@@ -76,7 +68,6 @@ export default class Metodos{
                  return a - b;
           });
           // debido a que si eliminamos un objeto todos los index del arreglo json se descuadran por lo tanto ordenamos y restamos una iteracion a los index ordenados
-
           for(var num of eliminados){   // eliminados se vuelve en los ordenados   
                radiacion.splice(num-x,1); 
                x++;
@@ -96,8 +87,7 @@ export default class Metodos{
           }
           for(var unico of ubicaciones){
                for(var marcador of radiacion){
-                    if( unico === marcador.ubicacion && marcador.hora.getHours() + 5 >= 11 && marcador.hora.getHours() + 5 <= 13 ){
-                         // console.log('marcador:', marcador.ubicacion,marcador.hora, unico, marcador.uv)
+                    if( unico === marcador.ubicacion && marcador.hora.getHours() + 5 >= 10 && marcador.hora.getHours() + 5 <= 16 ){
                          if(unico !== temp){ // este if existe debido al problema de fechas cruzadas en el arreglo final
                               fecha= new Date(marcador.hora); // se coge la primera fecha del nuevo filtrado, como resultado todas las muestras salen ordenadas por fecha
                               temp = unico;
@@ -107,7 +97,6 @@ export default class Metodos{
                               i++; 
                          }else{
                               if(i==0){ // garantizo que existio una muestra en las condiciones deseadas
-                                   console.log('Entree a una excepcion');
                               }else{
                               let obj= {         // por cada iteracion que entre al condicional se crea un nuevo objeto
                                    ubicacion:'ubicacion',
@@ -115,6 +104,7 @@ export default class Metodos{
                                    hora: new Date(),
                               };
                               resumen=resumen/i;          // promedio de /los uvs recolectados
+                              resumen = parseFloat(resumen.toFixed(3));
                               // resumen=Math.round(resumen);     // redondeamos el valor resumen
                               obj.ubicacion=temp;              // guardamos la ubi de referencia para el obj
                               obj.uv=resumen;                   
@@ -134,6 +124,7 @@ export default class Metodos{
                          hora:new Date(),
                     };
                     resumen=resumen/i;  // como para guardar un obj resumen se hace cada que cambia la fecha el ultimo cambio es guardado en el array
+                    resumen = parseFloat(resumen.toFixed(3));
                     obj.ubicacion=temp;
                     obj.uv=resumen;
                     obj.hora = new Date(fecha);
@@ -157,7 +148,7 @@ export default class Metodos{
           }
           for(var unico of ubicaciones){
                for(var marcador of radiacion){
-                    if( unico === marcador.ubicacion && marcador.hora.getHours() + 5 >= 11 && marcador.hora.getHours() + 5 <= 13 ){
+                    if( unico === marcador.ubicacion && marcador.hora.getHours() + 5 >= 10 && marcador.hora.getHours() + 5 <= 16 ){
                          // console.log('marcador:', marcador.ubicacion,marcador.hora, unico, marcador.uv)
                          if(unico !== temp){ // este if existe debido al problema de fechas cruzadas en el arreglo final
                               fecha= new Date(marcador.hora); // se coge la primera fecha del nuevo filtrado, como resultado todas las muestras salen ordenadas por fecha
@@ -168,7 +159,6 @@ export default class Metodos{
                               i++; 
                          }else{
                               if(i==0){ // garantizo que existio una muestra en las condiciones deseadas
-                                   console.log('Entree a una excepcion');
                               }else{
                               let obj= {         // por cada iteracion que entre al condicional se crea un nuevo objeto
                                    ubicacion:'ubicacion',
@@ -177,6 +167,7 @@ export default class Metodos{
                               };
                               resumen=resumen/i;          // promedio de /los uvs recolectados
                               // resumen=Math.round(resumen);     // redondeamos el valor resumen
+                              resumen = parseFloat(resumen.toFixed(3));
                               obj.ubicacion=temp;              // guardamos la ubi de referencia para el obj
                               obj.uv=resumen;                   
                               obj.hora = new Date(fecha);
@@ -195,6 +186,7 @@ export default class Metodos{
                          hora:new Date(),
                     };
                     resumen=resumen/i;  // como para guardar un obj resumen se hace cada que cambia la fecha el ultimo cambio es guardado en el array
+                    resumen = parseFloat(resumen.toFixed(3));
                     obj.ubicacion=temp;
                     obj.uv=resumen;
                     obj.hora = new Date(fecha);

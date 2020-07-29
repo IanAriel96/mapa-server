@@ -16,7 +16,7 @@ function middleware(error:any, req:any, res:any, next:any): void {
         fecha : dia,
     };
     Log.create(log).then(logDB=>{ 
-        console.log('Se guardo con exito el log');
+        // console.log('Se guardo con exito el log');
     }).catch(err => {
         next(err);
     })

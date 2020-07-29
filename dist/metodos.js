@@ -42,8 +42,6 @@ class Metodos {
         let x = 0; // utilizado para ayudar a la eliminacion de los objetos
         let bandera; // sirve para entrar a un lazo y almacenar por primera vez un objeto como referencia en la comparacion de los obj json
         let reciente; // objeto que almacenara al primer objeto json y actualizado a lo largo del metodo
-        // let radio = 1 ;     // radio de los hexagonos
-        // var coordenadas: number[] = Metodos.calcularCoordenadas(radio);
         for (var repetidos of radiacion) { // se separa cada objeto del array de radiacion
             ubicaciones.push(repetidos.ubicacion); // se almacena unicamente las ubicaciones de cada sensor que haya funcionado en ese dia presente
             ubicaciones = ubicaciones.filter(Metodos.distinct); // se llama al metodo distinct para filtrar los repetidos    
@@ -98,8 +96,7 @@ class Metodos {
         }
         for (var unico of ubicaciones) {
             for (var marcador of radiacion) {
-                if (unico === marcador.ubicacion && marcador.hora.getHours() + 5 >= 11 && marcador.hora.getHours() + 5 <= 13) {
-                    // console.log('marcador:', marcador.ubicacion,marcador.hora, unico, marcador.uv)
+                if (unico === marcador.ubicacion && marcador.hora.getHours() + 5 >= 10 && marcador.hora.getHours() + 5 <= 16) {
                     if (unico !== temp) { // este if existe debido al problema de fechas cruzadas en el arreglo final
                         fecha = new Date(marcador.hora); // se coge la primera fecha del nuevo filtrado, como resultado todas las muestras salen ordenadas por fecha
                         temp = unico;
@@ -110,7 +107,6 @@ class Metodos {
                     }
                     else {
                         if (i == 0) { // garantizo que existio una muestra en las condiciones deseadas
-                            console.log('Entree a una excepcion');
                         }
                         else {
                             let obj = {
@@ -119,6 +115,7 @@ class Metodos {
                                 hora: new Date(),
                             };
                             resumen = resumen / i; // promedio de /los uvs recolectados
+                            resumen = parseFloat(resumen.toFixed(3));
                             // resumen=Math.round(resumen);     // redondeamos el valor resumen
                             obj.ubicacion = temp; // guardamos la ubi de referencia para el obj
                             obj.uv = resumen;
@@ -138,6 +135,7 @@ class Metodos {
                     hora: new Date(),
                 };
                 resumen = resumen / i; // como para guardar un obj resumen se hace cada que cambia la fecha el ultimo cambio es guardado en el array
+                resumen = parseFloat(resumen.toFixed(3));
                 obj.ubicacion = temp;
                 obj.uv = resumen;
                 obj.hora = new Date(fecha);
@@ -164,7 +162,7 @@ class Metodos {
         }
         for (var unico of ubicaciones) {
             for (var marcador of radiacion) {
-                if (unico === marcador.ubicacion && marcador.hora.getHours() + 5 >= 11 && marcador.hora.getHours() + 5 <= 13) {
+                if (unico === marcador.ubicacion && marcador.hora.getHours() + 5 >= 10 && marcador.hora.getHours() + 5 <= 16) {
                     // console.log('marcador:', marcador.ubicacion,marcador.hora, unico, marcador.uv)
                     if (unico !== temp) { // este if existe debido al problema de fechas cruzadas en el arreglo final
                         fecha = new Date(marcador.hora); // se coge la primera fecha del nuevo filtrado, como resultado todas las muestras salen ordenadas por fecha
@@ -176,7 +174,6 @@ class Metodos {
                     }
                     else {
                         if (i == 0) { // garantizo que existio una muestra en las condiciones deseadas
-                            console.log('Entree a una excepcion');
                         }
                         else {
                             let obj = {
@@ -186,6 +183,7 @@ class Metodos {
                             };
                             resumen = resumen / i; // promedio de /los uvs recolectados
                             // resumen=Math.round(resumen);     // redondeamos el valor resumen
+                            resumen = parseFloat(resumen.toFixed(3));
                             obj.ubicacion = temp; // guardamos la ubi de referencia para el obj
                             obj.uv = resumen;
                             obj.hora = new Date(fecha);
@@ -204,6 +202,7 @@ class Metodos {
                     hora: new Date(),
                 };
                 resumen = resumen / i; // como para guardar un obj resumen se hace cada que cambia la fecha el ultimo cambio es guardado en el array
+                resumen = parseFloat(resumen.toFixed(3));
                 obj.ubicacion = temp;
                 obj.uv = resumen;
                 obj.hora = new Date(fecha);
